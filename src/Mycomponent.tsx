@@ -1,44 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-interface Beer {
-	id: number;
-	name: string;
-	description: string;
-}
-
-const MyComponent: React.FC = () => {
-	const [beers, setBeers] = useState<Beer[]>([]);
+export default function App() {
+	const [data, setData] = useState("");
+	const getData = async () => {
+		const resp = await fetch("https://api.sampleapis.com/beers/ale");
+		const json = await resp.json();
+		setData(json);
+	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await fetch("https://api.sampleapis.com/beers/ale");
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-				const data: Beer[] = await response.json();
-				setBeers(data);
-			} catch (error) {
-				console.error("Error fetching data:", error);
-			}
-		};
-
-		fetchData();
+		getData();
 	}, []);
 
-	return (
-		<div>
-			<h1>Ale Beers</h1>
-			<ul>
-				{beers.map((beer) => (
-					<li key={beer.id}>
-						<h2>{beer.name}</h2>
-						<p>{beer.description}</p>
-					</li>
-				))}
-			</ul>
-		</div>
-	);
-};
-
-export default MyComponent;
+	return <pre>{JSON.stringify(data, null, 2)}</pre>;
+}
